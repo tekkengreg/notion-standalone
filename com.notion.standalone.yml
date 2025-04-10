@@ -1,0 +1,28 @@
+app-id: com.notion.standalone
+runtime: org.freedesktop.Platform
+runtime-version: '23.08'
+sdk: org.freedesktop.Sdk
+command: notion-standalone
+
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --share=network
+  - --filesystem=xdg-download
+  - --filesystem=xdg-documents
+build-args:
+  - --socket=network
+modules:
+  - name: notion-standalone
+    buildsystem: simple
+    build-commands:
+      - curl -fsSL https://get.pnpm.io/install.sh | sh -
+      - export PNPM_HOME="/app/pnpm"
+      - export PATH="$PNPM_HOME:$PATH"
+      - pnpm version
+      - pnpm install
+      - pnpm run build
+    sources:
+      - type: dir
+        path: . 

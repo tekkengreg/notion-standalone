@@ -31,21 +31,27 @@ async function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
-    webPreferences: {
-      nodeIntegration: true
-    }
+    icon: '/tmp/icon.png',
+    // webPreferences: {
+    //   nodeIntegration: true,
+    //   contextIsolation: false
+    // }
   });
 
   const url = 'https://notion.so';
-  const faviconUrl = await getFavicon(url);
-  
+  const faviconUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Notion-logo.svg/2048px-Notion-logo.svg.png" //await getFavicon(url);
   if (faviconUrl) {
     try {
       const response = await fetch(faviconUrl);
       const buffer = await response.arrayBuffer();
-      const iconPath = path.join(app.getPath('temp'), 'app-icon.ico');
-      fs.writeFileSync(iconPath, buffer);
-      win.setIcon(iconPath);
+      const nativeImage = require('electron').nativeImage;
+      // const image = nativeImage.createFromBuffer(Buffer.from(buffer));
+      const image = nativeImage.createFromPath('/tmp/icon.png');
+      win.setIcon(image);
+        app.setAboutPanelOptions({
+          iconPath: '/tmp/icon.png'
+        })
+win.setOverlayIcon(image, 'Description for overlay')
     } catch (error) {
       console.error('Error setting icon:', error);
     }
