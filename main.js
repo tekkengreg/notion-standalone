@@ -31,14 +31,14 @@ async function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
-    icon: '/tmp/icon.png',
+    icon: '/tmp/icon.jpeg',
     // webPreferences: {
     //   nodeIntegration: true,
     //   contextIsolation: false
     // }
   });
 
-  const url = 'https://notion.so';
+  const url = 'https://app.sketchup.com/app';
   const faviconUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Notion-logo.svg/2048px-Notion-logo.svg.png" //await getFavicon(url);
   if (faviconUrl) {
     try {
@@ -46,10 +46,10 @@ async function createWindow() {
       const buffer = await response.arrayBuffer();
       const nativeImage = require('electron').nativeImage;
       // const image = nativeImage.createFromBuffer(Buffer.from(buffer));
-      const image = nativeImage.createFromPath('/tmp/icon.png');
+      const image = nativeImage.createFromPath('/tmp/icon.jpeg');
       win.setIcon(image);
         app.setAboutPanelOptions({
-          iconPath: '/tmp/icon.png'
+          iconPath: '/tmp/icon.jpeg'
         })
 win.setOverlayIcon(image, 'Description for overlay')
     } catch (error) {

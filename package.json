@@ -28,17 +28,17 @@
     "electron-builder": "^26.0.12"
   },
   "build": {
-    "appId": "com.tekkengreg.notion",
-    "productName": "notion-standalone",
+    "appId": "com.tekkengreg.sketchup",
+    "productName": "sketchup-standalone",
     
     "linux": {
       "target": ["AppImage"],
       "icon": "build/icon.png",
       "category": "Office",
-      "executableName": "notion-standalone",
+      "executableName": "sketchup-standalone",
         "desktop": {
           "entry":{
-          "Name": "Notion"
+          "Name": "Sketchup"
         }}
         
     }
