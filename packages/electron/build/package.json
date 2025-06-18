@@ -1,0 +1,92 @@
+{
+  "name": "notion-standalone",
+  "version": "1.0.0",
+  "description": "Electron app loading url",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:mac": "electron-builder --mac --arm64",
+    "prebuild": "node scripts/prebuild.js",
+    "build:flatpak": "flatpak-builder --force-clean build-dir com.notion.standalone.yml",
+    "install:flatpak": "flatpak-builder --user --install --force-clean build-dir com.notion.standalone.yml",
+    "run:flatpak": "flatpak run com.notion.standalone"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "electron"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^35.5.1",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.tekkengreg.notion",
+    "productName": "notion-standalone",
+    "files": [
+      "**/*",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/*.d.ts",
+      "!**/node_modules/.bin",
+      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+      "!.editorconfig",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
+      "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
+      "!**/{appveyor.yml,.travis.yml,circle.yml}",
+      "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
+    ],
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "defaultArch": "arm64",
+      "icon": "build/icon.png",
+      "category": "public.app-category.productivity",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "identity": null,
+      "darkModeSupport": true,
+      "asar": false,
+      "type": "distribution",
+      "minimumSystemVersion": "10.13",
+      "extendInfo": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        },
+        "LSApplicationCategoryType": "public.app-category.productivity",
+        "CFBundleDocumentTypes": [
+          {
+            "CFBundleTypeName": "All Files",
+            "CFBundleTypeRole": "Viewer",
+            "LSHandlerRank": "Default"
+          }
+        ]
+      }
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "icon": "build/icon.png",
+      "category": "Office",
+      "executableName": "notion-standalone",
+      "desktop": {
+        "entry": {
+          "Name": "Notion"
+        }
+      }
+    }
+  },
+  "productName": "Notion"
+}

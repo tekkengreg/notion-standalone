@@ -1,0 +1,61 @@
+{
+  "name": "notion-standalone",
+  "version": "1.0.0",
+  "description": "Electron app loading url",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron . --no-sandbox",
+    "build": "electron-builder",
+    "build:mac": "electron-builder --mac --arm64",
+    "prebuild": "node scripts/prebuild.js",
+    "build:flatpak": "flatpak-builder --force-clean build-dir com.notion.standalone.yml",
+    "install:flatpak": "flatpak-builder --user --install --force-clean build-dir com.notion.standalone.yml",
+    "run:flatpak": "flatpak run com.notion.standalone"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "electron"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^35.5.1",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.tekkengreg.notion",
+    "productName": "Notion",
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "defaultArch": "arm64",
+      "icon": "build/icon.png",
+      "category": "public.app-category.productivity",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "identity": null
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "icon": "build/icon.png",
+      "category": "Office",
+      "executableName": "notion-standalone",
+      "desktop": {
+        "entry": {
+          "Name": "Notion"
+        }
+      }
+    }
+  },
+  "productName": "Notion"
+}

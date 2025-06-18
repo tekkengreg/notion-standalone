@@ -1,77 +1,93 @@
 const { app, BrowserWindow } = require('electron');
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const path = require('path');
 const fs = require('fs');
 
-async function getFavicon(url) {
-  try {
-    const response = await fetch(url);
-    const html = await response.text();
-    const faviconMatch = html.match(/<link[^>]*rel="(?:icon|shortcut icon)"[^>]*href="([^"]+)"/i);
-    
-    if (faviconMatch) {
-      let faviconUrl = faviconMatch[1];
-      if (!faviconUrl.startsWith('http')) {
-        const baseUrl = new URL(url);
-        faviconUrl = new URL(faviconUrl, baseUrl.origin).href;
-      }
-      return faviconUrl;
-    }
-    
-    // Fallback to default favicon location
-    const baseUrl = new URL(url);
-    return `${baseUrl.origin}/favicon.ico`;
-  } catch (error) {
-    console.error('Error fetching favicon:', error);
-    return null;
-  }
-}
+// Log the app path and environment
+console.log('App path:', app.getAppPath());
+console.log('Is packaged:', app.isPackaged);
+console.log('Process type:', process.type);
+console.log('Process platform:', process.platform);
+console.log('Process arch:', process.arch);
 
-async function createWindow() {
+function createWindow() {
+  console.log('Creating window...');
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
-    icon: '/tmp/icon.png',
-    // webPreferences: {
-    //   nodeIntegration: true,
-    //   contextIsolation: false
-    // }
+    show: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      webSecurity: true,
+      allowRunningInsecureContent: false,
+      // Ajout des préférences pour le mode production
+      enableRemoteModule: true,
+      worldSafeExecuteJavaScript: true
+    }
   });
 
-  const url = 'https://notion.so';
-  const faviconUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Notion-logo.svg/2048px-Notion-logo.svg.png" //await getFavicon(url);
-  if (faviconUrl) {
-    try {
-      const response = await fetch(faviconUrl);
-      const buffer = await response.arrayBuffer();
-      const nativeImage = require('electron').nativeImage;
-      // const image = nativeImage.createFromBuffer(Buffer.from(buffer));
-      const image = nativeImage.createFromPath('/tmp/icon.png');
-      win.setIcon(image);
-        app.setAboutPanelOptions({
-          iconPath: '/tmp/icon.png'
-        })
-win.setOverlayIcon(image, 'Description for overlay')
-    } catch (error) {
-      console.error('Error setting icon:', error);
-    }
-  }
-
+  // Get the URL from the environment variable or use a default
+  const url = process.env.APP_URL || 'https://notion.so';
+  console.log('Loading URL:', url);
+  
+  // Load the URL
   win.loadURL(url);
+
+  // Afficher la fenêtre une fois que le contenu est chargé
+  win.webContents.on('did-finish-load', () => {
+    console.log('Content loaded, showing window...');
+    win.show();
+    win.focus();
+  });
+
+  // Log any errors
+  win.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+    console.error('Failed to load:', errorCode, errorDescription);
+  });
+
+  // Log window state changes
+  win.on('show', () => console.log('Window shown'));
+  win.on('hide', () => console.log('Window hidden'));
+  win.on('focus', () => console.log('Window focused'));
+  win.on('blur', () => console.log('Window blurred'));
+  win.on('closed', () => {
+    console.log('Window closed');
+    win = null;
+  });
+
+  // Ouvrir les DevTools en mode développement
+  if (!app.isPackaged) {
+    win.webContents.openDevTools();
+  }
 }
 
+// Gérer le démarrage de l'application
 app.whenReady().then(() => {
+  console.log('App is ready');
   createWindow();
 
   app.on('activate', () => {
+    console.log('App activated');
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
     }
   });
 });
 
+// Gérer la fermeture de l'application
 app.on('window-all-closed', () => {
+  console.log('All windows closed');
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+// Log any uncaught exceptions
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+});
+
+// Log any unhandled rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 }); 
